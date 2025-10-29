@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { IconDotsVertical } from "@tabler/icons-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -67,34 +68,34 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
-                <a
+                <Link
                   href="/account"
                   onClick={() => setActivePage("Account")}
                   className="flex w-full items-center gap-2"
                 >
                   <span className="text-base">👤</span>
                   <span>Account</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
-                <a
+                <Link
                   href="/personalization"
                   onClick={() => setActivePage("Personalization")}
                   className="flex w-full items-center gap-2"
                 >
                   <span className="text-base">🎨</span>
                   <span>Personalization</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
-                <a
+                <Link
                   href="/notifications"
                   onClick={() => setActivePage("Notifications")}
                   className="flex w-full items-center gap-2"
                 >
                   <span className="text-base">🔔</span>
                   <span>Notifications</span>
-                </a>
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />

@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import * as React from "react"
 import {
   IconFileText,
@@ -27,7 +28,6 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarGroup,
@@ -135,10 +135,10 @@ function MoreNavSection({
               className="[&[data-active=true]]:border-l-2 [&[data-active=true]]:border-l-primary [&[data-active=true]]:bg-primary/10 [&[data-active=true]]:font-semibold [&[data-active=true]]:text-primary"
               onClick={() => setActivePage(item.title)}
             >
-              <a href={item.url}>
+              <Link href={item.url} className="flex items-center gap-2">
                 <item.icon />
                 <span>{item.title}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         ))}
@@ -213,10 +213,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-                <a href="/">
+                <Link href="/pulse" className="flex items-center gap-2">
                   <IconBuilding className="!size-5" />
                   <span className="text-base font-semibold">Brick</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

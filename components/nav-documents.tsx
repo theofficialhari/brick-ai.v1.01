@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { IconDots, IconFolder, IconShare3, IconTrash, type Icon } from "@tabler/icons-react"
 
 import {
@@ -44,10 +45,10 @@ export function NavDocuments({
               className="[&[data-active=true]]:border-l-2 [&[data-active=true]]:border-l-primary [&[data-active=true]]:bg-primary/10 [&[data-active=true]]:font-semibold [&[data-active=true]]:text-primary"
               onClick={() => setActivePage(item.name)}
             >
-              <a href={item.url}>
+              <Link href={item.url} className="flex items-center gap-2">
                 <item.icon />
                 <span>{item.name}</span>
-              </a>
+              </Link>
             </SidebarMenuButton>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
