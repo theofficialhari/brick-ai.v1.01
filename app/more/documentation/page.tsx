@@ -1,12 +1,20 @@
 import type React from "react"
+import { useEffect } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { IconBook, IconCode, IconHelp } from "@tabler/icons-react"
+import { useActivePage } from "@/lib/active-page-context"
 
 export default function DocumentationPage() {
+  const { setActivePage } = useActivePage()
+
+  useEffect(() => {
+    setActivePage("Documentation")
+  }, [setActivePage])
+
   return (
     <SidebarProvider
       style={

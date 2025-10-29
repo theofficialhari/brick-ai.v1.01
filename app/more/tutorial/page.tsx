@@ -1,11 +1,19 @@
 import type React from "react"
+import { useEffect } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Card } from "@/components/ui/card"
 import { IconPlay } from "@tabler/icons-react"
+import { useActivePage } from "@/lib/active-page-context"
 
 export default function TutorialPage() {
+  const { setActivePage } = useActivePage()
+
+  useEffect(() => {
+    setActivePage("Brick Tutorial")
+  }, [setActivePage])
+
   return (
     <SidebarProvider
       style={

@@ -1,7 +1,6 @@
 "use client"
 
-import { IconCreditCard, IconDotsVertical, IconLogout, IconBell, IconUserCircle } from "@tabler/icons-react"
-
+import { IconDotsVertical } from "@tabler/icons-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   DropdownMenu,
@@ -13,6 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
+import { useActivePage } from "@/lib/active-page-context"
 
 export function NavUser({
   user,
@@ -24,6 +24,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const { setActivePage } = useActivePage()
 
   return (
     <SidebarMenu>
@@ -46,7 +47,7 @@ export function NavUser({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
+            className="w-60 rounded-lg p-2"
             side={isMobile ? "bottom" : "right"}
             align="end"
             sideOffset={4}
@@ -65,23 +66,41 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
+              <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
+                <a
+                  href="/account"
+                  onClick={() => setActivePage("Account")}
+                  className="flex w-full items-center gap-2"
+                >
+                  <span className="text-base">👤</span>
+                  <span>Account</span>
+                </a>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Personalization
+              <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
+                <a
+                  href="/personalization"
+                  onClick={() => setActivePage("Personalization")}
+                  className="flex w-full items-center gap-2"
+                >
+                  <span className="text-base">🎨</span>
+                  <span>Personalization</span>
+                </a>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconBell />
-                Notifications
+              <DropdownMenuItem asChild className="rounded-md px-3 py-2 text-sm">
+                <a
+                  href="/notifications"
+                  onClick={() => setActivePage("Notifications")}
+                  className="flex w-full items-center gap-2"
+                >
+                  <span className="text-base">🔔</span>
+                  <span>Notifications</span>
+                </a>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <IconLogout />
-              Log out
+            <DropdownMenuItem className="rounded-md px-3 py-2 text-sm">
+              <span className="text-base">🚪</span>
+              <span>Log out</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

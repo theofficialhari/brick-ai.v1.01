@@ -1,29 +1,71 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
 import { Card } from "@/components/ui/card"
 import { IconHeart, IconDots, IconCloudRain, IconChevronDown } from "@tabler/icons-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Checkbox } from "@/components/ui/checkbox"
+import { useActivePage } from "@/lib/active-page-context"
 
 export default function PulsePage() {
-  const [selectedAssetClass, setSelectedAssetClass] = useState<string | null>(null)
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const { setActivePage } = useActivePage()
+  const [selectedAssetClasses, setSelectedAssetClasses] = useState<string[]>([])
+  const [selectedMarkets, setSelectedMarkets] = useState<string[]>([])
+  const [assetPopoverOpen, setAssetPopoverOpen] = useState(false)
+  const [topicsPopoverOpen, setTopicsPopoverOpen] = useState(false)
 
-  const assetClasses = [
-    "Multifamily",
-    "Office",
-    "Logistics",
-    "Retail",
-    "Hotel",
-    "Data Centre",
-    "Industrial",
-    "Mixed-Use",
-  ]
-  const regions = ["Asia Pacific", "Americas", "Europe", "Middle East"]
+  useEffect(() => {
+    setActivePage("Pulse")
+  }, [setActivePage])
+
+  const assetClasses = useMemo(
+    () => [
+      "Multifamily",
+      "Office",
+      "Logistics",
+      "Retail",
+      "Hotel",
+      "Data Centre",
+      "Industrial",
+      "Mixed-Use",
+    ],
+    [],
+  )
+
+  const geographicMarkets = useMemo(
+    () => ({
+      "Asia Pacific": ["Singapore", "Sydney", "Tokyo", "Hong Kong"],
+      Americas: ["New York", "San Francisco", "Toronto", "São Paulo"],
+      Europe: ["London", "Paris", "Berlin", "Amsterdam"],
+      "Middle East": ["Dubai", "Riyadh", "Doha", "Abu Dhabi"],
+    }),
+    [],
+  )
+
+  const toggleAssetClass = (value: string) => {
+    setSelectedAssetClasses((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value],
+    )
+  }
+
+  const toggleMarket = (value: string) => {
+    setSelectedMarkets((prev) =>
+      prev.includes(value) ? prev.filter((item) => item !== value) : [...prev, value],
+    )
+  }
+
+  const activeAssetLabel = selectedAssetClasses.length
+    ? `${selectedAssetClasses.length} selected`
+    : "All asset classes"
+
+  const activeMarketLabel = selectedMarkets.length
+    ? `${selectedMarkets.length} markets`
+    : "All topics"
 
   return (
     <SidebarProvider
@@ -44,30 +86,78 @@ export default function PulsePage() {
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-6">
                   <div className="flex items-center gap-4">
-                    <button className="rounded-full bg-primary px-4 py-1.5 text-sm font-medium text-primary-foreground">
-                      For You
-                    </button>
+                    <Popover open={assetPopoverOpen} onOpenChange={setAssetPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="default"
+                          className="rounded-full px-4 py-1.5 text-sm font-medium"
+                        >
+                          For You
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-64 rounded-lg">
+                        <p className="text-sm font-semibold">Asset Class Filter</p>
+                        <p className="text-xs text-muted-foreground">
+                          Choose the asset classes that matter most to you.
+                        </p>
+                        <div className="mt-4 space-y-2">
+                          {assetClasses.map((assetClass) => (
+                            <label key={assetClass} className="flex items-center gap-2 text-sm">
+                              <Checkbox
+                                checked={selectedAssetClasses.includes(assetClass)}
+                                onCheckedChange={() => toggleAssetClass(assetClass)}
+                              />
+                              <span>{assetClass}</span>
+                            </label>
+                          ))}
+                        </div>
+                        <Button
+                          className="mt-4 w-full"
+                          onClick={() => setAssetPopoverOpen(false)}
+                        >
+                          Apply filters
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
                     <button className="rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted">
                       Top
                     </button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <button className="rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted flex items-center gap-1">
+                    <Popover open={topicsPopoverOpen} onOpenChange={setTopicsPopoverOpen}>
+                      <PopoverTrigger asChild>
+                        <button className="flex items-center gap-1 rounded-full px-4 py-1.5 text-sm font-medium text-muted-foreground hover:bg-muted">
                           Topics <IconChevronDown className="size-4" />
                         </button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="start">
-                        {regions.map((region) => (
-                          <DropdownMenuItem
-                            key={region}
-                            onClick={() => setSelectedRegion(region)}
-                            className={selectedRegion === region ? "bg-muted" : ""}
-                          >
-                            {region}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-72 rounded-lg">
+                        <p className="text-sm font-semibold">Geographic Market Filter</p>
+                        <p className="text-xs text-muted-foreground">
+                          Select the markets you want to track.
+                        </p>
+                        <div className="mt-4 space-y-4">
+                          {Object.entries(geographicMarkets).map(([region, markets]) => (
+                            <div key={region} className="space-y-2">
+                              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                {region}
+                              </p>
+                              <div className="grid grid-cols-2 gap-2">
+                                {markets.map((market) => (
+                                  <label key={market} className="flex items-center gap-2 rounded-md border px-2 py-1.5 text-xs">
+                                    <Checkbox
+                                      checked={selectedMarkets.includes(market)}
+                                      onCheckedChange={() => toggleMarket(market)}
+                                    />
+                                    <span>{market}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <Button className="mt-4 w-full" onClick={() => setTopicsPopoverOpen(false)}>
+                          Apply filters
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 text-sm">
@@ -81,27 +171,11 @@ export default function PulsePage() {
             <div className="flex gap-6 p-6">
               {/* Main Content Area (70%) */}
               <div className="flex-[7] space-y-6">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium text-muted-foreground">Asset Class:</span>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button className="rounded-md border px-3 py-1.5 text-sm font-medium hover:bg-muted flex items-center gap-1">
-                        {selectedAssetClass || "All Classes"} <IconChevronDown className="size-4" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start">
-                      <DropdownMenuItem onClick={() => setSelectedAssetClass(null)}>All Classes</DropdownMenuItem>
-                      {assetClasses.map((assetClass) => (
-                        <DropdownMenuItem
-                          key={assetClass}
-                          onClick={() => setSelectedAssetClass(assetClass)}
-                          className={selectedAssetClass === assetClass ? "bg-muted" : ""}
-                        >
-                          {assetClass}
-                        </DropdownMenuItem>
-                      ))}
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <div className="flex flex-wrap items-center gap-3 text-sm">
+                  <span className="font-medium text-muted-foreground">Asset Class:</span>
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">{activeAssetLabel}</span>
+                  <span className="font-medium text-muted-foreground">Topics:</span>
+                  <span className="rounded-full bg-muted px-3 py-1 text-xs font-medium">{activeMarketLabel}</span>
                 </div>
 
                 {/* Hero Article Card */}
