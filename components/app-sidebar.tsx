@@ -1,6 +1,6 @@
 "use client"
 
-import type * as React from "react"
+import * as React from "react"
 import {
   IconFileText,
   IconChartBar,
@@ -11,12 +11,12 @@ import {
   IconBolt,
   IconUsers,
   IconBook,
-  IconChevronRight,
   IconSearch,
-  IconDatabase,
-  IconFileAi,
-  IconFileDescription,
-  IconFolder,
+  IconShieldLock,
+  IconUsersGroup,
+  IconArchive,
+  IconUsersPlus,
+  IconMessageCircle2,
 } from "@tabler/icons-react"
 
 import { NavDocuments } from "@/components/nav-documents"
@@ -31,14 +31,18 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarGroup,
-  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarMenu,
 } from "@/components/ui/sidebar"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
+import { useActivePage } from "@/lib/active-page-context"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 
 const data = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
+    name: "Rachel Liu",
+    email: "rliu@brick.ai",
     avatar: "/avatars/shadcn.jpg",
   },
   navMain: [
@@ -49,23 +53,23 @@ const data = {
     },
     {
       title: "Agent",
-      url: "/assistant",
+      url: "/agent",
       icon: IconSparkles,
       isActive: true,
       items: [
         {
           title: "Document AI",
-          url: "/assistant/documents",
+          url: "/agent/document-ai",
           icon: IconFileText,
         },
         {
           title: "Underwriting AI",
-          url: "/assistant/underwriting",
+          url: "/agent/underwriting-ai",
           icon: IconChartBar,
         },
         {
           title: "Powerpoint AI",
-          url: "/assistant/presentation",
+          url: "/agent/powerpoint-ai",
           icon: IconPresentation,
         },
       ],
@@ -82,123 +86,151 @@ const data = {
     },
     {
       title: "Team",
-      url: "/team",
+      url: "#",
       icon: IconUsers,
+      isDropdown: true,
     },
   ],
-  documents: [
-    {
-      name: "Files",
-      url: "/vault/files",
-      icon: IconFolder,
-      items: [
-        { name: "Secured", url: "/vault/secured", icon: IconFileDescription },
-        { name: "Collaboration", url: "/vault/collaboration", icon: IconFileAi },
-        { name: "Archives", url: "/vault/archives", icon: IconDatabase },
-      ],
-    },
-    {
-      name: "Brick Tutorial",
-      url: "/tutorial",
-      icon: IconBook,
-    },
-    {
-      name: "Documentation",
-      url: "/documentation",
-      icon: IconFileText,
-    },
+  vault: [
+    { name: "Secured", url: "/vault/secured", icon: IconShieldLock },
+    { name: "Collaboration", url: "/vault/collaboration", icon: IconUsersGroup },
+    { name: "Archives", url: "/vault/archives", icon: IconArchive },
   ],
-  navSecondary: [],
+  more: [
+    { title: "Brick Tutorial", url: "/more/tutorial", icon: IconBook },
+    { title: "Documentation", url: "/more/documentation", icon: IconFileText },
+  ],
+  team: {
+    groups: [
+      { name: "Asset Management Team", members: 12 },
+      { name: "Acquisitions Team", members: 9 },
+      { name: "Legal & Compliance", members: 7 },
+      { name: "Finance Team", members: 6 },
+    ],
+    directMessages: [
+      { name: "Sarah Johnson", status: "Online", color: "bg-emerald-500" },
+      { name: "Michael Chen", status: "In a meeting", color: "bg-amber-500" },
+      { name: "Emma Davis", status: "Offline", color: "bg-muted" },
+      { name: "John Lee", status: "Online", color: "bg-emerald-500" },
+    ],
+  },
 }
 
-function CustomNavSecondary({
+function MoreNavSection({
   items,
-  ...props
 }: {
-  items: {
-    title: string
-    url: string
-    icon: any
-    items?: { title: string; url: string; icon?: any }[]
-  }[]
-} & React.ComponentPropsWithoutRef<typeof SidebarGroup>) {
+  items: { title: string; url: string; icon: React.ComponentType<{ className?: string }> }[]
+}) {
+  const { activePage, setActivePage } = useActivePage()
+
   return (
-    <SidebarGroup {...props}>
-      <SidebarGroupContent>
-        <SidebarMenu>
-          {items.map((item) => {
-            const hasChildren = Array.isArray(item.items) && item.items.length > 0
-
-            if (!hasChildren) {
-              return (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </a>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              )
-            }
-
-            return (
-              <SidebarMenuItem key={item.title}>
-                <Collapsible className="group/collapsible">
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton>
-                      <item.icon />
-                      <span>{item.title}</span>
-                      <IconChevronRight className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-90" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                  <CollapsibleContent>
-                    <SidebarMenu className="ml-6 mt-1">
-                      {item.items?.map((child) => (
-                        <SidebarMenuItem key={child.title}>
-                          <SidebarMenuButton asChild size="sm">
-                            <a href={child.url}>
-                              {child.icon && <child.icon className="!size-4" />}
-                              <span className="text-sm">{child.title}</span>
-                            </a>
-                          </SidebarMenuButton>
-                        </SidebarMenuItem>
-                      ))}
-                    </SidebarMenu>
-                  </CollapsibleContent>
-                </Collapsible>
-              </SidebarMenuItem>
-            )
-          })}
-        </SidebarMenu>
-      </SidebarGroupContent>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>MORE</SidebarGroupLabel>
+      <SidebarMenu>
+        {items.map((item) => (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
+              asChild
+              isActive={activePage === item.title}
+              className="[&[data-active=true]]:border-l-2 [&[data-active=true]]:border-l-primary [&[data-active=true]]:bg-primary/10 [&[data-active=true]]:font-semibold [&[data-active=true]]:text-primary"
+              onClick={() => setActivePage(item.title)}
+            >
+              <a href={item.url}>
+                <item.icon />
+                <span>{item.title}</span>
+              </a>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
     </SidebarGroup>
   )
 }
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+function TeamMenu({ open, onOpenChange }: { open: boolean; onOpenChange: (value: boolean) => void }) {
   return (
-    <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
-              <a href="/">
-                <IconBuilding className="!size-5" />
-                <span className="text-base font-semibold">Brick</span>
-              </a>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
-      <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavDocuments items={data.documents} />
-        <CustomNavSecondary items={data.navSecondary} className="mt-auto" />
-      </SidebarContent>
-      <SidebarFooter>
-        <NavUser user={data.user} />
-      </SidebarFooter>
-    </Sidebar>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="w-[280px] rounded-l-xl border-0 p-6">
+        <SheetHeader className="text-left">
+          <SheetTitle className="text-lg font-semibold">Team</SheetTitle>
+        </SheetHeader>
+        <div className="mt-4 flex h-full flex-col gap-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Groups</p>
+            <div className="mt-3 space-y-3">
+              {data.team.groups.map((group) => (
+                <div key={group.name} className="rounded-lg border px-3 py-2">
+                  <p className="text-sm font-medium">{group.name}</p>
+                  <p className="text-xs text-muted-foreground">{group.members} members</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Direct Messages</p>
+            <div className="mt-3 space-y-3">
+              {data.team.directMessages.map((person) => (
+                <div key={person.name} className="flex items-center justify-between rounded-lg border px-3 py-2">
+                  <div>
+                    <p className="text-sm font-medium">{person.name}</p>
+                    <p className="text-xs text-muted-foreground">{person.status}</p>
+                  </div>
+                  <span className={`size-2 rounded-full ${person.color}`} aria-hidden />
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="mt-auto space-y-2">
+            <Separator />
+            <Button variant="outline" className="w-full justify-start gap-2">
+              <IconUsersPlus className="size-4" />
+              Create new group
+            </Button>
+            <Button variant="outline" className="w-full justify-start gap-2">
+              <IconMessageCircle2 className="size-4" />
+              Search people
+            </Button>
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [isTeamOpen, setIsTeamOpen] = React.useState(false)
+
+  const handleDropdownSelect = React.useCallback((item: { title: string }) => {
+    if (item.title === "Team") {
+      setIsTeamOpen(true)
+    }
+  }, [])
+
+  return (
+    <>
+      <Sidebar collapsible="icon" {...props}>
+        <SidebarHeader>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild className="data-[slot=sidebar-menu-button]:!p-1.5">
+                <a href="/">
+                  <IconBuilding className="!size-5" />
+                  <span className="text-base font-semibold">Brick</span>
+                </a>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
+        </SidebarHeader>
+        <SidebarContent>
+          <NavMain items={data.navMain} onDropdownSelect={handleDropdownSelect} />
+          <NavDocuments items={data.vault} />
+          <MoreNavSection items={data.more} />
+        </SidebarContent>
+        <SidebarFooter>
+          <NavUser user={data.user} />
+        </SidebarFooter>
+      </Sidebar>
+      <TeamMenu open={isTeamOpen} onOpenChange={setIsTeamOpen} />
+    </>
   )
 }
