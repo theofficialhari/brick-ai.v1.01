@@ -1,5 +1,6 @@
 "use client"
 
+import Link from "next/link"
 import { IconChevronRight, type Icon } from "@tabler/icons-react"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { SidebarMenuButton } from "@/components/ui/sidebar"
@@ -53,10 +54,10 @@ export function NavMain({ items, onDropdownSelect }: NavMainProps) {
                     className="[&[data-active=true]]:border-l-2 [&[data-active=true]]:border-l-primary [&[data-active=true]]:bg-primary/10 [&[data-active=true]]:font-semibold [&[data-active=true]]:text-primary"
                     onClick={() => setActivePage(item.title)}
                   >
-                    <a href={item.url}>
+                    <Link href={item.url} className="flex items-center gap-2">
                       {item.icon && <item.icon />}
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )
@@ -107,10 +108,10 @@ export function NavMain({ items, onDropdownSelect }: NavMainProps) {
                             className="[&[data-active=true]]:border-l-2 [&[data-active=true]]:border-l-primary [&[data-active=true]]:bg-primary/10 [&[data-active=true]]:font-semibold [&[data-active=true]]:text-primary"
                             onClick={() => setActivePage(child.title)}
                           >
-                            <a href={child.url}>
+                            <Link href={child.url} className="flex items-center gap-2">
                               {child.icon && <child.icon className="!size-4" />}
                               <span className="text-sm">{child.title}</span>
-                            </a>
+                            </Link>
                           </SidebarMenuButton>
                         </SidebarMenuItem>
                       ))}
